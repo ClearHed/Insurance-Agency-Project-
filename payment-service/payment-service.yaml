@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: message-service
+spec:
+  selector:
+    app: message-service
+  type: NodePort
+  ports:
+    - name: http
+      port: 8083
+      nodePort: 30003
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment-service
+spec:
+  selector:
+    matchLabels:
+      app: payment-service
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: payment-service
+    spec:
+      containers:
+        - name: server
+          image: clearheadster/payment-server:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8082
+
+---
